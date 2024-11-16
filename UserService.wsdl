@@ -1,0 +1,79 @@
+<definitions xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+             xmlns:web="http://www.example.org/userservice"
+             xmlns:tns="http://www.example.org/userservice"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             targetNamespace="http://www.example.org/userservice">
+
+    <!-- Messages -->
+    <message name="getUsersRequest" />
+    <message name="getUsersResponse">
+        <part name="users" type="tns:userList"/>
+    </message>
+    <message name="addUserRequest">
+        <part name="name" type="xsd:string"/>
+        <part name="email" type="xsd:string"/>
+    </message>
+    <message name="addUserResponse">
+        <part name="status" type="xsd:string"/>
+    </message>
+
+    <!-- PortType -->
+    <portType name="UserServicePortType">
+        <operation name="getUsers">
+            <input message="tns:getUsersRequest"/>
+            <output message="tns:getUsersResponse"/>
+        </operation>
+        <operation name="addUser">
+            <input message="tns:addUserRequest"/>
+            <output message="tns:addUserResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="UserServiceBinding" type="tns:UserServicePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getUsers">
+            <soap:operation soapAction="urn:#getUsers"/>
+            <input>
+                <soap:body use="literal" namespace="http://www.example.org/userservice"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://www.example.org/userservice"/>
+            </output>
+        </operation>
+        
+        <operation name="addUser">
+            <soap:operation soapAction="urn:#addUser"/>
+            <input>
+                <soap:body use="literal" namespace="http://www.example.org/userservice"/>
+            </input>
+            <output>
+                <soap:body use="literal" namespace="http://www.example.org/userservice"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="UserService">
+        <port name="UserServicePort" binding="tns:UserServiceBinding">
+            <soap:address location="http://localhost:8000/soap"/>
+        </port>
+    </service>
+
+    <!-- User Type Definition -->
+    <types>
+        <xsd:schema targetNamespace="http://www.example.org/userservice">
+            <xsd:complexType name="user">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string"/>
+                    <xsd:element name="email" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="userList">
+                <xsd:sequence>
+                    <xsd:element name="user" type="tns:user" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </types>
+</definitions>
